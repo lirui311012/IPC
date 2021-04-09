@@ -44,6 +44,7 @@ void client(int readfd,int writefd)
 {
     size_t len;
     char buff[MAX_BUFF];
+    cout << "please input file path:" << endl;
     fgets(buff,MAX_BUFF,stdin);
     len = strlen((const char *)buff);
     if(buff[len-1] == '\n')
