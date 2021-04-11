@@ -16,6 +16,10 @@ using namespace std;
 #define FIFO2 "./fifo2"
 
 //fifo用在有亲缘关系的父子进程之间IPC
+/*
+注意：如果将父进程里面的两个open调用的顺序对换的话，该程序将就不再工作。
+因为，如果当前尚没有任何进程打开某个FIFO来写的话，那么打开该FIFO来读的进程将阻塞
+*/
 
 void server(int readfd,int writefd)
 {
@@ -77,13 +81,13 @@ int main(int argc, char const *argv[])
     }
     if((childpid = fork()) == 0)
     {
-        readfd = open(FIFO1,O_RDONLY,0);
         writefd = open(FIFO2,O_WRONLY,0);
+        readfd = open(FIFO1,O_RDONLY,0);
         server(readfd,writefd);
         exit(0);
     }
-    writefd = open(FIFO1,O_WRONLY,0);
     readfd = open(FIFO2,O_RDONLY,0);
+    writefd = open(FIFO1,O_WRONLY,0);
     client(readfd,writefd);
     waitpid(childpid,NULL,0);
     close(readfd);
